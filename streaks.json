@@ -1,0 +1,23 @@
+{
+    "dailyStreaks": {
+        "leetcode": {
+            "count": 1
+        },
+        "hardwareCourse": {
+            "count": 2
+        },
+        "exercise": {
+            "count": 0
+        },
+        "piano": {
+            "count": 0
+        },
+        "drawing": {
+            "count": 0
+        },
+        "softwareCourse": {
+            "count": 1
+        }
+    },
+    "weeklyStreaks": {}
+}

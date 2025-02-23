@@ -1,18 +1,47 @@
 -----------DAILY-----------
 ---Morning---
-Leetcode Question
-Cadence
-AWS/IBM
+LeetCode
+HardwareCourse
+Exercise
 
 ---Evening---
-Piano practice
-Drawing Practice
-Indoor exercise
+Piano
+Drawing
+SoftwareCourse
 
 -----------WEEKLY-----------
-Hardware project
-Update Website
-Internship application
-University courses notes
+HardwareProject
+WebsiteUpdate
+UniversityNotes
+
+-----------BRAINSTORM-----------
+-----------COMPLETED-----------
+- json file set up
+- count go up when done command
+- clear channel
+-----------TO COMPLlETE-----------
+
+Task 1
+/summary for current streaks done
+
+Task 2
+if all is completed in 1 day, send fire gif
+"Waaaaay to go"(find 5 randomized alt)
+
+Task 3
+if one streak is cut, send extinguish gif with streak name
+"Oh no, your {streak-name} has ended"
+
+Task 5
+automatic reminder
+Daily morning : 10am
+Daily evening: 6pm
+
+Weekly : 2pm - ON HOLD
+
+---feature list---
+
+
+
 
 
