@@ -1,23 +1,26 @@
 {
-    "dailyStreaks": {
+    "daily-streaks": {
         "leetcode": {
-            "count": 0
+            "daily": 1,
+            "aim": 1
         },
-        "Exercise": {
-            "count": 0
+        "exercise": {
+            "daily": 1,
+            "aim": 1
         },
-        "Piano": {
-            "count": 0
+        "piano": {
+            "daily": 1,
+            "aim": 1
         },
-        "Drawing": {
-            "count": 0
+        "drawing": {
+            "daily": 1,
+            "aim": 1
         },
-        "Git commit": {
-            "count": 0
+        "git-commit": {
+            "daily": 0,
+            "aim": 1
         }
     },
-    "parameter": {
-        "daysPassed": 1
-    },
-    "weeklyStreaks": {}
+    "master-count": 5,
+    "weekly-streaks": {}
 }

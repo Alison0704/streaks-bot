@@ -9,11 +9,6 @@ Piano
 Drawing
 SoftwareCourse
 
------------WEEKLY-----------
-HardwareProject
-WebsiteUpdate
-UniversityNotes
-
 -----------BRAINSTORM-----------
 -----------COMPLETED-----------
 - json file set up
@@ -21,23 +16,17 @@ UniversityNotes
 - clear channel
 - summary for current streaks done
 - Message when streaks is updated
------------TO COMPLlETE-----------
-
-- Task
-if all is completed in 1 day, send fire gif
-"Waaaaay to go"(find 5 randomized alt)
-
-- Task
-if one streak is cut, send extinguish gif with streak name
+- if all is completed in 1 day, send fire gif
+-if one streak is cut, send extinguish gif with streak name
 "Oh no, your {streak-name} has ended"
-
+-rework on streaks logic
+-command to list what to do next
+-daily recap reformat
+-----------TO COMPLlETE-----------
 - Task
 automatic reminder
-Daily morning : 10am
-Daily evening: 6pm
+Daily evening: 8pm
 
----feature list---
-Weekly : 2pm - ON HOLD
 
 
 
