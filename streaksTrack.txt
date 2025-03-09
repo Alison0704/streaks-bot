@@ -19,27 +19,25 @@ UniversityNotes
 - json file set up
 - count go up when done command
 - clear channel
+- summary for current streaks done
+- Message when streaks is updated
 -----------TO COMPLlETE-----------
 
-Task 1
-/summary for current streaks done
-
-Task 2
+- Task
 if all is completed in 1 day, send fire gif
 "Waaaaay to go"(find 5 randomized alt)
 
-Task 3
+- Task
 if one streak is cut, send extinguish gif with streak name
 "Oh no, your {streak-name} has ended"
 
-Task 5
+- Task
 automatic reminder
 Daily morning : 10am
 Daily evening: 6pm
 
-Weekly : 2pm - ON HOLD
-
 ---feature list---
+Weekly : 2pm - ON HOLD
 
 
 
