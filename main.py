@@ -35,6 +35,7 @@ JSON_FILE = "streaks.json"
 async def on_ready():
     print(f"Logged in as {bot.user}")
     await bot.loop.create_task(send_scheduled_message())
+    
 
 @bot.event
 async def on_error(event, *args, **kwargs):
@@ -108,7 +109,7 @@ async def send_scheduled_message():
 
     while not bot.is_closed():
         now = datetime.datetime.now(pytz.utc).astimezone(est)
-        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 16, 9, 0))  # 6:00 AM EST
+        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 6, 15, 0))  # 6:00 AM EST
 
         if now >= target_time:
             target_time += datetime.timedelta(days=1)
