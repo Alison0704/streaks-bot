@@ -63,6 +63,16 @@ def update_json(data, category):
         print(f"❌Streak name {category} does not exist!")
 
 
+# --------STREAK FREEZE HANDLER--------
+def streak_freeze():
+    index = random.Random().random() * 100
+    streaks = load_json()
+    if index > 70:
+        streaks["freeze"] += 1
+        save_json(streaks)
+        return "Keep it up, here is a streak for ya!!"
+
+
 # ---------------MESSAGE---------------
 def summary_message():
     message = load_json()
@@ -126,9 +136,9 @@ async def send_scheduled_message():
             await channel.send("Hope you slept well!")
             await channel.send("====================================================================")
             await channel.send("Here is your current streaks:")
-            await channel.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
+            await channel.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
             await channel.send(summary_message())
-            await channel.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
+            await channel.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
             await channel.send("====================================================================")
 
             # pick out the details
@@ -148,18 +158,27 @@ async def send_scheduled_message():
             print("Master Count:", master_count)
 
             if count != master_count:
-                await channel.send(
-                    f"**Oh no! {master_count - count} extinguished streaks!**")
-                # Iterate through dailyStreaks
-                for activity, details in streaks["daily-streaks"].items():
-                    if details["daily"] != details["aim"]:
-                        details["daily"] = 0
-                        details["aim"] = 0
-                        await channel.send(f"```{activity} has been reset to zero```")
-                await channel.send(EXTINGUISH)
+                if streaks["freeze"] == 0:
+                    await channel.send(
+                        f"**Oh no! {master_count - count} extinguished streaks!**")
+                    # Iterate through dailyStreaks
+                    for activity, details in streaks["daily-streaks"].items():
+                        if details["daily"] != details["aim"]:
+                            details["daily"] = 0
+                            details["aim"] = 0
+                            await channel.send(f"```{activity} has been reset to zero :(```")
+                    if count == 0:
+                        await channel.send(EXTINGUISH)
+                else:
+                    streaks["freeze"] -= master_count
+                    await channel.send("1 streak freeze was used!")
+                    await channel.send("Don't give up!! Let's get back on track!!")
             else:
                 await channel.send("WE ARE STILL ALIVE!!")
                 await channel.send(STILL_ALIVE)
+                index = random.Random().random() * 100
+                if index < 20:
+                    await channel.send(f"**{streak_freeze()}**")
             for activity, details in streaks["daily-streaks"].items():
                 details["aim"] += 1
             save_json(streaks)
@@ -184,9 +203,10 @@ async def clear_channel(ctx, amount: int = 50):
 async def summary(ctx):
     channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
     if channel == ctx.channel:
-        await ctx.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
+        await ctx.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
         await ctx.send(summary_message())
-        await ctx.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
+        await ctx.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
+
 
 @bot.command()
 @commands.has_permissions(send_messages=True)
@@ -220,30 +240,68 @@ async def hi(ctx):
     if channel == ctx.channel:
         await ctx.send(f"{message}")
 
+@bot.command()
+@commands.has_permissions(send_messages=True)
+async def add(ctx, category: str = ""):
+    channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
+    if channel == ctx.channel:
+        streaks = load_json()
+        new_entry = {
+            "daily": 0,
+            "aim": 1
+        }
+        streaks["daily-streaks"][category] = new_entry
+        save_json(streaks)
+        await ctx.send(f"{category} was successfully added!")
+
+@bot.command()
+@commands.has_permissions(send_messages=True)
+async def remove(ctx, category: str = ""):
+    channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
+    deleted = 0
+    to_be_deleted = 0
+    if channel == ctx.channel:
+        streaks = load_json()
+
+        for activity, details in streaks["daily-streaks"].items():
+            if activity == category:
+                to_be_deleted = 1
+        if to_be_deleted:
+            del streaks["daily-streaks"][category]  # Remove the entry
+            save_json(streaks)
+            await ctx.send(f"Entry '{category}' removed successfully!")
+            deleted = 1
+
+        if not deleted:
+            await ctx.send(f"Entry '{category}' not found in daily-streaks.")
+
 
 @bot.command()
 @commands.has_permissions(send_messages=True)
 async def done(ctx, category: str = ""):
-    if not category:
-        await ctx.send("Please provide a streak name!")
-        return
-
-    streaks = load_json()
     channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
-    found = False
+
     if channel == ctx.channel:
-        for activity, details in streaks["daily-streaks"].items():
-            if activity == category:
-                if details["daily"] < details["aim"]:
-                    details["daily"] += 1
-                    save_json(streaks)
-                    await ctx.send(f"{category} streaks updated")
-                else:
-                    await ctx.send(f"{category} streaks already updated")
-                found = True
-                break
-        if not found:
-            await ctx.send(f"Streak {category} not found.")
+        if not category:
+            await ctx.send("Please provide a streak name!")
+            return
+
+        streaks = load_json()
+        channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
+        found = False
+        if channel == ctx.channel:
+            for activity, details in streaks["daily-streaks"].items():
+                if activity == category:
+                    if details["daily"] < details["aim"]:
+                        details["daily"] += 1
+                        save_json(streaks)
+                        await ctx.send(f"{category} streaks updated")
+                    else:
+                        await ctx.send(f"{category} streaks already updated")
+                    found = True
+                    break
+            if not found:
+                await ctx.send(f"Streak {category} not found.")
 
 
 # ------------MAIN ENTRY POINT------------
