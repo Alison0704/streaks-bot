@@ -170,9 +170,10 @@ async def send_scheduled_message():
                     if count == 0:
                         await channel.send(EXTINGUISH)
                 else:
-                    streaks["freeze"] -= master_count
-                    await channel.send("1 streak freeze was used!")
-                    await channel.send("Don't give up!! Let's get back on track!!")
+                    if streaks["freeze"] > 0:
+                        streaks["freeze"] -= master_count
+                        await channel.send("1 streak freeze was used!")
+                        await channel.send("Don't give up!! Let's get back on track!!")
             else:
                 await channel.send("WE ARE STILL ALIVE!!")
                 await channel.send(STILL_ALIVE)
@@ -253,6 +254,16 @@ async def add(ctx, category: str = ""):
         streaks["daily-streaks"][category] = new_entry
         save_json(streaks)
         await ctx.send(f"{category} was successfully added!")
+
+
+@bot.command()
+@commands.has_permissions(send_messages=True)
+async def freeze_check(ctx):
+    channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
+    if channel == ctx.channel:
+        streaks = load_json()
+        freeze_count = streaks["freeze"]
+        await ctx.send(f"You currently have {freeze_count} freeze streak!!")
 
 @bot.command()
 @commands.has_permissions(send_messages=True)
