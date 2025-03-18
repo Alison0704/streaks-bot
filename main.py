@@ -3,6 +3,7 @@ import random
 from typing import Final
 import os
 
+
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -141,7 +142,7 @@ async def send_scheduled_message():
 
     while not bot.is_closed():
         now = datetime.datetime.now(pytz.utc).astimezone(est)
-        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 6, 6, 0))  # 6:00 AM EST
+        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 6, 0, 0))  # 6:00 AM EST
 
         if now >= target_time:
             target_time += datetime.timedelta(days=1)
