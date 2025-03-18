@@ -240,20 +240,19 @@ async def left(ctx):
 @bot.command()
 @commands.has_permissions(send_messages=True)
 async def hi(ctx):
-    message = summary_message_morning()
-    # index = random.Random().random() * 100
-    # if index < 10:
-    #     message = f"Hi {ctx.author.mention}"
-    # elif index < 30:
-    #     message = f"Hello! I hope you are having a great day!"
-    # elif index < 50:
-    #     message = f"Howdy! {ctx.author.mention}!"
-    # elif index < 70:
-    #     message = f"Bonzour! {ctx.author.mention}!"
-    # elif index < 98:
-    #     message = f"Bonjour! {ctx.author.mention}!"
-    # else:
-    #     message = f"I wonder if you will achieve your dream"
+    index = random.Random().random() * 100
+    if index < 10:
+        message = f"Hi {ctx.author.mention}"
+    elif index < 30:
+        message = f"Hello! I hope you are having a great day!"
+    elif index < 50:
+        message = f"Howdy! {ctx.author.mention}!"
+    elif index < 70:
+        message = f"Bonzour! {ctx.author.mention}!"
+    elif index < 98:
+        message = f"Bonjour! {ctx.author.mention}!"
+    else:
+        message = f"I wonder if you will achieve your dream"
     channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
     if channel == ctx.channel:
         await ctx.send(f"{message}")
