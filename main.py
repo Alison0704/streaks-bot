@@ -35,7 +35,7 @@ JSON_FILE = "streaks.json"
 async def on_ready():
     print(f"Logged in as {bot.user}")
     await bot.loop.create_task(send_scheduled_message())
-    
+
 
 @bot.event
 async def on_error(event, *args, **kwargs):
@@ -79,7 +79,29 @@ def summary_message():
     summary_output = "```"
     summary_streaks = message.get("daily-streaks", {})
     for activity, info in summary_streaks.items():
-        summary_output += f"\nStreaks:{info['daily']} - - - - Completed: {info['daily']==info['aim']} - - - - {str(activity).upper()} "
+        summary_output += f"\nStreaks:{info['daily']} - - - - Completed: {info['daily'] == info['aim']} - - - - {str(activity).upper()} "
+    summary_output += "```"
+    return summary_output
+
+
+def summary_message_morning():
+    message = load_json()
+    count = 0
+    summary_output = "```"
+    summary_output += "\nYesterday you completed:\n"
+    summary_output += "--------------------------------------------\n"
+    summary_streaks = message.get("daily-streaks", {})
+    for activity, info in summary_streaks.items():
+        if info['daily'] == info['aim']:
+            summary_output += f"{str(activity).upper()}\n"
+            count += 1
+    if count == 0:
+        summary_output += "...nothing...\n"
+        summary_output += "--------------------------------------------\n"
+        summary_output += "Don't give up!!!\n"
+    else:
+        summary_output += "--------------------------------------------\n"
+        summary_output += "Keep it up!!!\n"
     summary_output += "```"
     return summary_output
 
@@ -90,7 +112,7 @@ def left_message():
     left_streaks = message.get("daily-streaks", {})
     for activity, info in left_streaks.items():
         if int(info['daily']) != int(info['aim']):
-            left_output += f"\n>>{activity}"
+            left_output += f"\n>> {activity}"
     left_output += "```"
     return left_output
 
@@ -119,7 +141,7 @@ async def send_scheduled_message():
 
     while not bot.is_closed():
         now = datetime.datetime.now(pytz.utc).astimezone(est)
-        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 6, 15, 0))  # 6:00 AM EST
+        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 6, 6, 0))  # 6:00 AM EST
 
         if now >= target_time:
             target_time += datetime.timedelta(days=1)
@@ -135,10 +157,7 @@ async def send_scheduled_message():
             await channel.send(f"Hello! <@{owner.owner.id}>")
             await channel.send("Hope you slept well!")
             await channel.send("====================================================================")
-            await channel.send("Here is your current streaks:")
-            await channel.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
-            await channel.send(summary_message())
-            await channel.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
+            await channel.send(summary_message_morning())
             await channel.send("====================================================================")
 
             # pick out the details
@@ -165,23 +184,20 @@ async def send_scheduled_message():
                     for activity, details in streaks["daily-streaks"].items():
                         if details["daily"] != details["aim"]:
                             details["daily"] = 0
-                            details["aim"] = 0
+                            details["aim"] = 1
                             await channel.send(f"```{activity} has been reset to zero :(```")
                     if count == 0:
                         await channel.send(EXTINGUISH)
                 else:
                     if streaks["freeze"] > 0:
-                        streaks["freeze"] -= master_count
+                        streaks["freeze"] -= 1
                         await channel.send("1 streak freeze was used!")
                         await channel.send("Don't give up!! Let's get back on track!!")
             else:
                 await channel.send("WE ARE STILL ALIVE!!")
                 await channel.send(STILL_ALIVE)
-                index = random.Random().random() * 100
-                if index < 20:
-                    await channel.send(f"**{streak_freeze()}**")
-            for activity, details in streaks["daily-streaks"].items():
-                details["aim"] += 1
+                for activity, details in streaks["daily-streaks"].items():
+                    details["aim"] += 1
             save_json(streaks)
             await channel.send("====================================================================")
             await channel.send("Have a wonderful day!")
@@ -204,9 +220,7 @@ async def clear_channel(ctx, amount: int = 50):
 async def summary(ctx):
     channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
     if channel == ctx.channel:
-        await ctx.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
         await ctx.send(summary_message())
-        await ctx.send("**🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥**")
 
 
 @bot.command()
@@ -221,25 +235,28 @@ async def left(ctx):
             await ctx.send("Ah you completed everything!!")
             await ctx.send(FIRED_UP)
 
+
 @bot.command()
 @commands.has_permissions(send_messages=True)
 async def hi(ctx):
-    index = random.Random().random() * 100
-    if index < 10:
-        message = f"Hi {ctx.author.mention}"
-    elif index < 30:
-        message = f"Hello! I hope you are having a great day!"
-    elif index < 50:
-        message = f"Howdy! {ctx.author.mention}!"
-    elif index < 70:
-        message = f"Bonzour! {ctx.author.mention}!"
-    elif index < 98:
-        message = f"Bonjour! {ctx.author.mention}!"
-    else:
-        message = f"I wonder if you will achieve your dream"
+    message = summary_message_morning()
+    # index = random.Random().random() * 100
+    # if index < 10:
+    #     message = f"Hi {ctx.author.mention}"
+    # elif index < 30:
+    #     message = f"Hello! I hope you are having a great day!"
+    # elif index < 50:
+    #     message = f"Howdy! {ctx.author.mention}!"
+    # elif index < 70:
+    #     message = f"Bonzour! {ctx.author.mention}!"
+    # elif index < 98:
+    #     message = f"Bonjour! {ctx.author.mention}!"
+    # else:
+    #     message = f"I wonder if you will achieve your dream"
     channel = bot.get_channel(ALLOWED_CHANNEL_ID_DAILY)
     if channel == ctx.channel:
         await ctx.send(f"{message}")
+
 
 @bot.command()
 @commands.has_permissions(send_messages=True)
@@ -251,6 +268,7 @@ async def add(ctx, category: str = ""):
             "daily": 0,
             "aim": 1
         }
+        streaks["master-count"] += 1
         streaks["daily-streaks"][category] = new_entry
         save_json(streaks)
         await ctx.send(f"{category} was successfully added!")
@@ -264,6 +282,7 @@ async def freeze_check(ctx):
         streaks = load_json()
         freeze_count = streaks["freeze"]
         await ctx.send(f"You currently have {freeze_count} freeze streak!!")
+
 
 @bot.command()
 @commands.has_permissions(send_messages=True)
@@ -279,6 +298,7 @@ async def remove(ctx, category: str = ""):
                 to_be_deleted = 1
         if to_be_deleted:
             del streaks["daily-streaks"][category]  # Remove the entry
+            streaks["master-count"] -= 1
             save_json(streaks)
             await ctx.send(f"Entry '{category}' removed successfully!")
             deleted = 1
