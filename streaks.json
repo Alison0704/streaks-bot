@@ -8,20 +8,12 @@
             "daily": 0,
             "aim": 1
         },
-        "piano": {
-            "daily": 0,
-            "aim": 1
-        },
         "git-commit": {
-            "daily": 0,
-            "aim": 1
-        },
-        "drawing": {
             "daily": 0,
             "aim": 1
         }
     },
-    "master-count": 5,
+    "master-count": 3,
     "freeze": 2,
     "weekly-streaks": {}
 }

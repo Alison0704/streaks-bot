@@ -301,15 +301,14 @@ async def remove(ctx, category: str = ""):
         for activity, details in streaks["daily-streaks"].items():
             if activity == category:
                 to_be_deleted = 1
-        if to_be_deleted:
-            del streaks["daily-streaks"][category]  # Remove the entry
-            streaks["master-count"] -= 1
-            save_json(streaks)
-            await ctx.send(f"Entry '{category}' removed successfully!")
-            deleted = 1
-
-        if not deleted:
-            await ctx.send(f"Entry '{category}' not found in daily-streaks.")
+            if to_be_deleted:
+                del streaks["daily-streaks"][category]  # Remove the entry
+                streaks["master-count"] -= 1
+                save_json(streaks)
+                await ctx.send(f"Entry '{category}' removed successfully!")
+                deleted = 1
+            if not deleted:
+                await ctx.send(f"Entry '{category}' not found in daily-streaks.")
 
 
 @bot.command()
