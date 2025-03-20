@@ -197,6 +197,9 @@ async def send_scheduled_message():
             else:
                 await channel.send("WE ARE STILL ALIVE!!")
                 await channel.send(STILL_ALIVE)
+                index = random.randint(0, 100)
+                if index < 25:
+                    streaks["freeze"] += 1
                 for activity, details in streaks["daily-streaks"].items():
                     details["aim"] += 1
             save_json(streaks)
@@ -241,6 +244,8 @@ async def left(ctx):
 @commands.has_permissions(send_messages=True)
 async def hi(ctx):
     index = random.Random().random() * 100
+    index1 = random.randint(0, 100)
+    print(index)
     if index < 10:
         message = f"Hi {ctx.author.mention}"
     elif index < 30:
