@@ -23,9 +23,9 @@ SoftwareCourse
 -command to list what to do next
 -daily recap reformat
 -----------TO COMPLlETE-----------
-- Task
-automatic reminder
-Daily evening: 8pm
+-> Freeze logic
+-->Use freeze for each category instead of the whole group
+-->Freeze works only and only if the count <= num of freeze left
 
 
 

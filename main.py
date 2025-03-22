@@ -3,7 +3,6 @@ import random
 from typing import Final
 import os
 
-
 import discord
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -170,7 +169,7 @@ async def send_scheduled_message():
 
             # Iterate through dailyStreaks
             for activity, details in streaks["daily-streaks"].items():
-                if details["daily"] == details["aim"]:
+                if details["daily"] != details["aim"]:
                     count += 1
 
             # Debug
@@ -178,7 +177,8 @@ async def send_scheduled_message():
             print("Master Count:", master_count)
 
             if count != master_count:
-                if streaks["freeze"] == 0:
+                if streaks["freeze"] == 0 or streaks["freeze"] < count:
+                    # When all freeze count is zero or less than count
                     await channel.send(
                         f"**Oh no! {master_count - count} extinguished streaks!**")
                     # Iterate through dailyStreaks
@@ -189,11 +189,10 @@ async def send_scheduled_message():
                             await channel.send(f"```{activity} has been reset to zero :(```")
                     if count == 0:
                         await channel.send(EXTINGUISH)
-                else:
-                    if streaks["freeze"] > 0:
-                        streaks["freeze"] -= 1
-                        await channel.send("1 streak freeze was used!")
-                        await channel.send("Don't give up!! Let's get back on track!!")
+                else:  # streaks["freeze"] >= count
+                    streaks["freeze"] -= count
+                    await channel.send(f"{count} streak freeze was used!")
+                    await channel.send("Don't give up!! Let's get back on track!!")
             else:
                 await channel.send("WE ARE STILL ALIVE!!")
                 await channel.send(STILL_ALIVE)
