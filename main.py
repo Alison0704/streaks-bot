@@ -141,7 +141,7 @@ async def send_scheduled_message():
 
     while not bot.is_closed():
         now = datetime.datetime.now(pytz.utc).astimezone(est)
-        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 6, 0, 0))  # 6:00 AM EST
+        target_time = est.localize(datetime.datetime(now.year, now.month, now.day, 7, 47, 0))  # 6:00 AM EST
 
         if now >= target_time:
             target_time += datetime.timedelta(days=1)
@@ -161,11 +161,7 @@ async def send_scheduled_message():
             await channel.send("====================================================================")
 
             # pick out the details
-            if "master-count" in streaks:
-                master_count = streaks["master-count"]
-            else:
-                print("❌ 'master-count' key not found in streaks JSON.")
-                return
+            master_count = streaks["master-count"]
 
             # Iterate through dailyStreaks
             for activity, details in streaks["daily-streaks"].items():
@@ -176,19 +172,26 @@ async def send_scheduled_message():
             print("Count:", count)
             print("Master Count:", master_count)
 
-            if count != master_count:
+            # Count is the number of NONE completed streaks
+            # therefore there is at least one streak not maintained yesterday
+            if count != 0:
+                await channel.send(
+                    f"**Oh no! {count} streaks were not done yesterday!**")
                 if streaks["freeze"] == 0 or streaks["freeze"] < count:
                     # When all freeze count is zero or less than count
-                    await channel.send(
-                        f"**Oh no! {master_count - count} extinguished streaks!**")
                     # Iterate through dailyStreaks
+                    # Therefore no streaks were used
+                    await channel.send(f"You don't have enough free streaks to maintain the flames! :(")
                     for activity, details in streaks["daily-streaks"].items():
                         if details["daily"] != details["aim"]:
                             details["daily"] = 0
                             details["aim"] = 1
                             await channel.send(f"```{activity} has been reset to zero :(```")
-                    if count == 0:
+                        else:
+                            details["aim"] += 1
+                    if count == master_count:
                         await channel.send(EXTINGUISH)
+
                 else:  # streaks["freeze"] >= count
                     streaks["freeze"] -= count
                     await channel.send(f"{count} streak freeze was used!")
@@ -205,9 +208,6 @@ async def send_scheduled_message():
             await channel.send("====================================================================")
             await channel.send("Have a wonderful day!")
             await channel.send("====================================================================")
-            print("Message sent!")
-
-
 # ------------------------------------COMMAND FUNCTIONS-----------------------------------
 @bot.command()
 @commands.has_permissions(manage_messages=True, send_messages=True, read_message_history=True)
